@@ -1,0 +1,27 @@
+{
+  "name": "pony_power_api",
+  "version": "0.0.1",
+  "description": "Pony power scraper api layer",
+  "main": "app/server.js",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^4.12.0",
+    "eslint-config-google": "^0.9.1",
+    "mocha": "^4.0.1",
+    "sepia": "^2.0.2"
+  },
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "pg": "^7.4.0",
+    "express": "~4.0.0"
+  },
+  "scripts": {
+    "test": "mocha app/**/*.spec.js",
+    "test-debug": "VCR_MODE=cache mocha --inspect-brk app/**/*.spec.js",
+    "test-vcr": "VCR_MODE=cache npm test",
+    "start": "node app/server.js",
+    "start-vcr": "VCR_MODE=cache npm start",
+    "lint": "node_modules/.bin/eslint ."
+  },
+  "author": "Valerie Dryden"
+}

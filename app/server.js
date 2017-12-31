@@ -7,12 +7,12 @@ const router = express.Router();
 
 const mapToFilter = require('./filters')
 const {
-  orderBy
+  orderedCars
 } = require('./repository')
 
 router.get('/top_cars', async function(req, res){
   const filter = mapToFilter(req.query.selector)
-  const cars = await orderBy(filter, req.query.limit)
+  const cars = await orderedCars(filter, req.query.limit)
   res.json(cars);
 })
 

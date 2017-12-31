@@ -1,6 +1,6 @@
 const { Client } = require('pg')
 
-const orderBy = async ({ selector = `'cost' -> 'price'`, order = 'ASC'}, limit = 10) => {
+const orderedCars = async ({ selector = `'cost' -> 'price'`, order = 'ASC'}, limit = 10) => {
   const client = new Client()
 
   await client.connect()
@@ -20,5 +20,5 @@ const orderBy = async ({ selector = `'cost' -> 'price'`, order = 'ASC'}, limit =
 }
 
 module.exports = {
-  orderBy
+  orderedCars
 }

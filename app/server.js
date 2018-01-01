@@ -7,28 +7,29 @@ const router = express.Router();
 
 const mapToFilter = require('./filters')
 const {
-  orderedBy,
-  orderedByMake,
-  orderedBySearchType,
-  orderedBySearchTypeAndMake
+  orderedBy
 } = require('./repository')
 
 router.get('/top_cars', async function(req, res){
   const filter = mapToFilter(req.query.selector)
-  const cars = await orderedBy(filter, req.query.limit)
+  const params = { limit: req.query.limit }
+
+  const cars = await orderedBy(filter, params)
   res.json(cars)
 })
 
 router.get('/top_cars/:searchType', async function (req, res) {
   const filter = mapToFilter(req.query.selector)
-  const cars = await orderedBySearchType(req.params.searchType, filter, req.query.limit)
+  const params = { limit: req.query.limit, searchType: req.params.searchType }
+  const cars = await orderedBy(filter, params)
   res.json(cars)
 })
 
 router.get('/top_cars/:searchType/:make', async function (req, res) {
   const filter = mapToFilter(req.query.selector)
+  const params = { limit: req.query.limit, searchType: req.params.searchType, make: req.params.make }
 
-  const cars = await orderedBySearchTypeAndMake(req.params.make, req.params.searchType, filter, req.query.limit)
+  const cars = await orderedBy(filter, params)
   res.json(cars)
 })
 

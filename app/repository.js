@@ -1,18 +1,11 @@
 const { Client } = require('pg')
 
-const orderedBy = async (filters, limit = 10) => {
-  const { selector = `car_attributes -> 'cost' ->> 'price'`, order = 'ASC', castType = 'int' } = filters
-
+const orderedBy = async (filter, params) => {
   const client = new Client()
   await client.connect()
 
   try {
-    const query = `SELECT car_attributes
-                   FROM scraped_car
-                   WHERE (car_attributes ->> 'makeSlug') != 'dacia'
-                   ORDER BY (${selector})::${castType} ${order}
-                   LIMIT ${limit}`
-    console.log(query)
+    const query = buildQuery(filter, params)
     const res = await client.query(query)
     return res.rows
   } catch (error) {
@@ -22,87 +15,35 @@ const orderedBy = async (filters, limit = 10) => {
   }
 }
 
-const orderedBySearchType = async (searchType, filters, limit = 10) => {
-  const { selector = `car_attributes -> 'cost' ->> 'price'`, order = 'ASC', castType = 'int' } = filters
+const buildQuery = (filter, params) => {
+  const { selector = `car_attributes -> 'cost' ->> 'price'`, order = 'ASC', castType = 'int' } = filter
+  const { limit = 24, searchType = 'all', make = 'all' } = params
 
-  const client = new Client()
-  await client.connect()
+  return `SELECT car_attributes
+          FROM scraped_car
+          WHERE (car_attributes ->> 'makeSlug') != 'dacia'
+          ${makeLimit(make)}
+          ${searchTypeLimit(searchType)}
+          ORDER BY (${selector})::${castType} ${order}
+          LIMIT ${limit}`
+}
 
+const searchTypeLimit = (searchType) => {
   let searchTypeLimit = `AND car_attributes ->> 'searchType' = '${searchType}'`
   if (searchType == 'all') {
     searchTypeLimit = ''
   }
-
-  try {
-    const query = `SELECT car_attributes
-                   FROM scraped_car
-                   WHERE car_attributes ->> 'makeSlug' != 'dacia'
-                   ${searchTypeLimit}
-                   ORDER BY (${selector})::${castType} ${order},
-                   car_attributes -> 'cost' ->> 'price'
-                   LIMIT ${limit}`
-    console.log(query)
-    const res = await client.query(query)
-    return res.rows
-  } catch (error) {
-    throw error
-  } finally {
-    await client.end()
-  }
+  return searchTypeLimit
 }
 
-const orderedByMake = async (make, filters, limit = 10) => {
-  const { selector = `car_attributes -> 'cost' ->> 'price'`, order = 'ASC', castType = 'int' } = filters
-
-  const client = new Client()
-  await client.connect()
-  try {
-    const query = `SELECT car_attributes
-                   FROM scraped_car
-                   WHERE car_attributes ->> 'makeSlug' = '${make}'
-                   ORDER BY (${selector}) ${order},
-                   car_attributes -> 'cost' ->> 'price'
-                   LIMIT ${limit}`
-    console.log(query)
-    const res = await client.query(query)
-    return res.rows
-  } catch (error) {
-    throw error
-  } finally {
-    await client.end()
+const makeLimit = (make) => {
+  let makeLimit = ` AND car_attributes ->> 'makeSlug' = '${make}'`
+  if (make == 'all') {
+    makeLimit = ''
   }
-}
-
-const orderedBySearchTypeAndMake = async (make, searchType, { selector = `car_attributes -> 'cost' ->> 'price'`, order = 'ASC' }, limit = 10) => {
-  const client = new Client()
-  await client.connect()
-
-  let searchTypeLimit = `AND car_attributes ->> 'searchType' = '${searchType}'`
-  if(searchType == 'all') {
-    searchTypeLimit = ''
-  }
-
-  try {
-    const query = `SELECT car_attributes
-                   FROM scraped_car
-                   WHERE car_attributes ->> 'makeSlug' = '${make}'
-                   ${searchTypeLimit}
-                   ORDER BY (${selector}) ${order},
-                   car_attributes -> 'cost' ->> 'price'
-                   LIMIT ${limit}`
-    console.log(query)
-    const res = await client.query(query)
-    return res.rows
-  } catch (error) {
-    throw error
-  } finally {
-    await client.end()
-  }
+  return makeLimit
 }
 
 module.exports = {
-  orderedBy,
-  orderedByMake,
-  orderedBySearchType,
-  orderedBySearchTypeAndMake
+  orderedBy
 }

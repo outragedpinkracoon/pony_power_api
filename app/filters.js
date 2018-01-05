@@ -1,27 +1,27 @@
 const mapToFilter = (value) => {
   const lookup = {
     'bhp': {
-      selector: `car_attributes -> 'engine' ->> 'breakHorsePower'`,
+      selector: `attributes -> 'engine' ->> 'breakHorsePower'`,
       order: 'DESC',
       castType: 'int'
     },
     'acceleration': {
-      selector: `car_attributes -> 'engine' ->> 'acceleration'`,
+      selector: `attributes -> 'engine' ->> 'acceleration'`,
       order: 'ASC',
       castType: 'int'
     },
     'price': {
-      selector: `car_attributes -> 'cost' ->> 'price'`,
+      selector: `attributes -> 'cost' ->> 'price'`,
       order: 'ASC',
       castType: 'int'
     },
     'mileage': {
-      selector: `car_attributes ->> 'mileage'`,
+      selector: `attributes ->> 'mileage'`,
       order: 'ASC',
       castType: 'int'
     },
     'mpg': {
-      selector: `car_attributes ->> 'mpg'`,
+      selector: `attributes ->> 'mpg'`,
       order: 'DESC',
       castType: 'dec'
     }

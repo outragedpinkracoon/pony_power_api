@@ -16,12 +16,13 @@ const orderedBy = async (filter, params) => {
 }
 
 const buildQuery = (filter, params) => {
-  const { selector = `car_attributes -> 'cost' ->> 'price'`, order = 'ASC', castType = 'int' } = filter
+  const { selector = `attributes -> 'cost' ->> 'price'`, order = 'ASC', castType = 'int' } = filter
   const { limit = 24, searchType = null, make = null } = params
 
-  return `SELECT car_attributes
+  return `SELECT attributes
           FROM scraped_car
-          WHERE (car_attributes ->> 'makeSlug') != 'dacia'
+          WHERE (attributes ->> 'makeSlug') != 'dacia'
+          AND (attributes -> 'towing' ->> 'maxTowingWeightUnbraked')::int > 400
           ${optionalConstraint('makeSlug', make)}
           ${optionalConstraint('searchType', searchType)}
           ORDER BY (${selector})::${castType} ${order}
@@ -31,7 +32,7 @@ const buildQuery = (filter, params) => {
 const optionalConstraint = (attribute, value) => {
   let constraint = ''
   if (value != null) {
-    constraint = `AND car_attributes ->> '${attribute}' = '${value}'`
+    constraint = `AND attributes ->> '${attribute}' = '${value}'`
   }
   return constraint
 }

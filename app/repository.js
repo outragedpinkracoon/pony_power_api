@@ -29,6 +29,7 @@ const countByMake = async (type) => {
 }
 
 const buildQuery = (filter, params) => {
+  // eslint-disable-next-line max-len
   const { selector = `attributes -> 'cost' ->> 'price'`, order = 'ASC', castType = 'int' } = filter
   const { limit = 24, searchType = null, make = null } = params
 

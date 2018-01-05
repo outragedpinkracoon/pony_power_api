@@ -21,14 +21,15 @@ router.get('/top_cars', async function(req, res){
   const params = { limit: req.query.limit }
 
   const cars = await orderedBy(filter, params)
-  res.json(cars)
+  res.json({cars: cars})
 })
 
 router.get('/top_cars/:searchType', async function (req, res) {
   const filter = mapToFilter(req.query.selector)
   const params = { limit: req.query.limit, searchType: req.params.searchType }
+
   const cars = await orderedBy(filter, params)
-  res.json(cars)
+  res.json({ cars: cars })
 })
 
 router.get('/top_cars/:searchType/:make', async function (req, res) {
@@ -36,10 +37,10 @@ router.get('/top_cars/:searchType/:make', async function (req, res) {
   const params = { limit: req.query.limit, searchType: req.params.searchType, make: req.params.make }
 
   const cars = await orderedBy(filter, params)
-  res.json(cars)
+  res.json({ cars: cars })
 })
 
 app.use('/api', router);
 
 app.listen(port);
-console.log('Magic happens on port ' + port);
+console.log('Server running on port ' + port);

@@ -13,7 +13,8 @@ app.use(function (req, res, next) {
 
 const mapToFilter = require('./filters')
 const {
-  orderedBy
+  orderedBy,
+  countByMake
 } = require('./repository')
 
 router.get('/top_cars', async function(req, res){
@@ -38,6 +39,15 @@ router.get('/top_cars/:searchType/:make', async function (req, res) {
 
   const cars = await orderedBy(filter, params)
   res.json({ cars: cars })
+})
+
+
+router.get('/cars_by_make', async function (req, res) {
+  const results = await countByMake()
+  results.forEach(item => {
+    item.link = `http://localhost:8080/api/top_cars/all/${item.slug}`
+  });
+  res.json({ data: results })
 })
 
 app.use('/api', router);
